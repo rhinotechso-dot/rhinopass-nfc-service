@@ -18,3 +18,7 @@ export const config = {
   ndefBlockSize: toNumber(process.env.NFC_NDEF_BLOCK_SIZE, 4),
   ndefMaxBytes: toNumber(process.env.NFC_NDEF_MAX_BYTES, 48),
 };
+
+export const setBridgeToken = (token: string) => {
+  config.bridgeToken = token;
+};

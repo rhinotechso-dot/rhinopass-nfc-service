@@ -12,9 +12,11 @@ export class NfcBridge {
   private nfc = new NFC();
   private readers = new Set<string>();
   private ws: BridgeWsServer;
+  private onError?: (message: string) => void;
 
-  constructor(ws: BridgeWsServer) {
+  constructor(ws: BridgeWsServer, onError?: (message: string) => void) {
     this.ws = ws;
+    this.onError = onError;
   }
 
   start() {
@@ -66,6 +68,7 @@ export class NfcBridge {
       });
 
       reader.on("error", (err: Error) => {
+        this.onError?.(err.message);
         this.ws.broadcast({
           type: "badge:error",
           payload: { reader: reader.name, message: err.message },
@@ -78,6 +81,7 @@ export class NfcBridge {
     });
 
     this.nfc.on("error", (err: Error) => {
+      this.onError?.(err.message);
       this.ws.broadcast({
         type: "badge:error",
         payload: { reader: "system", message: err.message },
