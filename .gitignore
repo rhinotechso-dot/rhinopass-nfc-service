@@ -1,4 +1,6 @@
 .env
+.docs/DEV.md
+docs/DEV.md
 node_modules
 dist
 build
