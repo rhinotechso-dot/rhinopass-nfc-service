@@ -7,26 +7,54 @@ Local NFC bridge service for RhinoPass.
 - Writes a token to the tag (NDEF text record)
 - Sends the UID + token over WebSocket to the dashboard
 
+## Desktop app (recommended)
+This bridge ships as a small desktop app for non-technical admins.
+The app lets them:
+- See reader status
+- Save the device token
+- Choose auto-start on login
+
+Use the desktop app for production devices.
+
 ## Environment
 Copy `.env.example` to `.env` and adjust if needed.
 Set `NFC_BRIDGE_TOKEN` to a device token used by the dashboard when linking
-badges.
+badges. If using the desktop app, the token can be saved from the UI.
 
-## Run (dev)
+## Run (dev: bridge only)
 ```bash
 npm install
-npm run dev
+npm run dev:bridge
 ```
 
-## Run (prod)
+## Run (dev: desktop app)
+```bash
+npm run build
+npm run dev:app
+```
+
+## Run (prod: desktop app)
 ```bash
 npm run build
 npm start
 ```
 
-## Windows service install
-See `docs/windows-service.md` for a step-by-step guide to run the bridge as a
-Windows Service (recommended for production devices).
+## Package installers
+```bash
+npm run dist
+```
+The installers are generated in the `release/` folder.
+
+## GitHub Releases (recommended for distribution)
+Create a version tag and push it to build Windows + macOS installers and publish
+them as a GitHub Release.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release assets will include the installers plus `INSTALLATION.txt`.
 
 ## WebSocket events
 Client -> Bridge:

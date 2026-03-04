@@ -2,15 +2,20 @@
   "name": "rhinopass-nfc-service",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/index.js",
+  "main": "dist/electron/main.js",
   "type": "commonjs",
   "scripts": {
-    "dev": "tsx src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "dev:bridge": "tsx src/index.ts",
+    "dev:app": "npm run build && electron dist/electron/main.js",
+    "build": "tsc && node scripts/copy-assets.js",
+    "start": "electron dist/electron/main.js",
+    "start:bridge": "node dist/index.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
+    "electron-store": "^9.0.0",
     "ndef": "^0.2.0",
     "nfc-pcsc": "^0.8.1",
     "ws": "^8.17.1"
@@ -18,7 +23,23 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/ws": "^8.5.12",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
+  },
+  "build": {
+    "appId": "com.rhinopass.nfcbridge",
+    "productName": "Rhinopass NFC Bridge",
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      "docs/INSTALLATION.txt"
+    ],
+    "directories": {
+      "output": "release"
+    }
   }
 }

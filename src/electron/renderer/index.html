@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhinopass NFC Bridge</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div class="logo-wrap">
+          <img src="./icon.svg" alt="Rhinopass logo" />
+        </div>
+        <div class="header-copy">
+          <h1>Rhinopass NFC Bridge</h1>
+          <p class="subtitle">Keep this app running to link badges.</p>
+        </div>
+        <span id="headerStatus" class="status status-offline">Disconnected</span>
+      </header>
+
+      <section class="card">
+        <div class="row">
+          <span class="label">Reader status</span>
+          <span id="readerStatus" class="status">Checking…</span>
+        </div>
+        <div class="row">
+          <span class="label">Readers</span>
+          <span id="readerList" class="value">--</span>
+        </div>
+        <div class="row">
+          <span class="label">Bridge</span>
+          <span id="bridgeStatus" class="value">--</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <label class="label" for="tokenInput">Device token</label>
+        <input id="tokenInput" class="input" placeholder="Paste device token" />
+        <label class="toggle">
+          <input id="autoStartToggle" type="checkbox" />
+          <span>Start on system login</span>
+        </label>
+        <button id="saveBtn" class="button">Save settings</button>
+        <p id="saveHint" class="hint"></p>
+      </section>
+    </main>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>
