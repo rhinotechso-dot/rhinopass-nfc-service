@@ -3,17 +3,22 @@
   font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 
+html,
 body {
+  height: 100%;
   margin: 0;
   background: #f6f8fb;
   color: #1f2937;
+  overflow: hidden;
 }
 
 .app {
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  height: 100%;
+  overflow: hidden;
 }
 
 .header {
@@ -24,18 +29,19 @@ body {
 }
 
 .logo-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: #0e67ee;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: transparent;
   display: grid;
   place-items: center;
   flex-shrink: 0;
 }
 
 .logo-wrap img {
-  width: 26px;
-  height: auto;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
 }
 
 .header-copy {
@@ -68,6 +74,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   font-size: 13px;
 }
 
@@ -76,6 +83,7 @@ h1 {
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
+  min-width: 110px;
 }
 
 .value {

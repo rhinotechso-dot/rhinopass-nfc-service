@@ -1,7 +1,5 @@
 import path from "path";
 import { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage } from "electron";
-import Store from "electron-store";
-
 import { BridgeWsServer } from "../ws/server";
 import { NfcBridge } from "../nfc/bridge";
 import { config, setBridgeToken } from "../config";
@@ -11,29 +9,57 @@ type Settings = {
   autoStart: boolean;
 };
 
-const store = new Store<Settings>({
-  name: "settings",
-  defaults: {
-    deviceToken: "",
-    autoStart: false,
-  },
-});
+type SettingsStore = {
+  get: <Key extends keyof Settings>(key: Key) => Settings[Key];
+  set: <Key extends keyof Settings>(key: Key, value: Settings[Key]) => void;
+};
+
+let store: SettingsStore | null = null;
+
+const loadElectronStore = async () => {
+  const moduleLoader = new Function('return import("electron-store")');
+  const mod = (await moduleLoader()) as { default?: unknown };
+  return mod.default ?? mod;
+};
+
+const initStore = async () => {
+  if (store) return store;
+  const Store = (await loadElectronStore()) as new <T extends Record<string, any>>(
+    options: {
+      name?: string;
+      defaults: T;
+    },
+  ) => SettingsStore;
+  store = (new Store<Settings>({
+    name: "settings",
+    defaults: {
+      deviceToken: "",
+      autoStart: false,
+    },
+  }) as unknown) as SettingsStore;
+  return store;
+};
 
 let mainWindow: BrowserWindow | null = null;
 let nfcBridge: NfcBridge | null = null;
+let wsServer: BridgeWsServer | null = null;
 let tray: Tray | null = null;
 let lastErrorAt: number | null = null;
 
-const wsServer = new BridgeWsServer({
-  host: config.serviceHost,
-  port: config.servicePort,
-  getReaders: () => nfcBridge?.getReaders() ?? [],
-  onLinkRequested: () => undefined,
-  onLinkStopped: () => undefined,
-});
-
 const startBridge = () => {
   if (nfcBridge) return;
+  if (!wsServer) {
+    wsServer = new BridgeWsServer({
+      host: config.serviceHost,
+      port: config.servicePort,
+      getReaders: () => nfcBridge?.getReaders() ?? [],
+      onLinkRequested: () => undefined,
+      onLinkStopped: () => undefined,
+      onError: () => {
+        lastErrorAt = Date.now();
+      },
+    });
+  }
   nfcBridge = new NfcBridge(wsServer, () => {
     lastErrorAt = Date.now();
   });
@@ -46,10 +72,11 @@ const startBridge = () => {
 const createWindow = (showOnReady = true) => {
   mainWindow = new BrowserWindow({
     width: 420,
-    height: 520,
+    height: 490,
     resizable: false,
     show: false,
     title: "Rhinopass NFC Bridge",
+    icon: path.join(__dirname, "renderer", "app-icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -97,18 +124,34 @@ const applyAutoStart = (enabled: boolean) => {
   });
 };
 
-app.whenReady().then(() => {
-  const savedToken = store.get("deviceToken");
+const gotLock = app.requestSingleInstanceLock();
+
+if (!gotLock) {
+  app.quit();
+}
+
+app.on("second-instance", () => {
+  if (!mainWindow) {
+    createWindow(true);
+    return;
+  }
+  mainWindow.show();
+});
+
+app.whenReady().then(async () => {
+  const settingsStore = await initStore();
+  const savedToken = settingsStore.get("deviceToken");
   if (savedToken) {
     setBridgeToken(savedToken);
   }
-  applyAutoStart(Boolean(store.get("autoStart")));
+  applyAutoStart(Boolean(settingsStore.get("autoStart")));
 
   const loginSettings = app.getLoginItemSettings();
   const shouldShow = !loginSettings.wasOpenedAtLogin;
   createWindow(shouldShow);
   startBridge();
   setupTray();
+  Menu.setApplicationMenu(null);
 
   setInterval(broadcastStatus, 1500);
 });
@@ -140,24 +183,25 @@ ipcMain.handle("bridge:get-status", () => ({
 }));
 
 ipcMain.handle("settings:get", () => ({
-  deviceToken: store.get("deviceToken"),
-  autoStart: Boolean(store.get("autoStart")),
+  deviceToken: store?.get("deviceToken") ?? "",
+  autoStart: Boolean(store?.get("autoStart")),
 }));
 
 ipcMain.handle(
   "settings:set",
   async (_event, update: Partial<Settings>) => {
+    const settingsStore = await initStore();
     if (typeof update.deviceToken === "string") {
-      store.set("deviceToken", update.deviceToken.trim());
+      settingsStore.set("deviceToken", update.deviceToken.trim());
       setBridgeToken(update.deviceToken.trim());
     }
     if (typeof update.autoStart === "boolean") {
-      store.set("autoStart", update.autoStart);
+      settingsStore.set("autoStart", update.autoStart);
       applyAutoStart(update.autoStart);
     }
     return {
-      deviceToken: store.get("deviceToken"),
-      autoStart: Boolean(store.get("autoStart")),
+      deviceToken: settingsStore.get("deviceToken"),
+      autoStart: Boolean(settingsStore.get("autoStart")),
     };
   },
 );
@@ -194,10 +238,10 @@ function setupTray() {
 function getTrayIcon(status: "online" | "connecting" | "error") {
   const iconName =
     status === "online"
-      ? "tray-online.svg"
+      ? "tray-online.png"
       : status === "error"
-        ? "tray-error.svg"
-        : "tray-connecting.svg";
+        ? "tray-error.png"
+        : "tray-connecting.png";
   const iconPath = path.join(__dirname, "renderer", iconName);
   return nativeImage.createFromPath(iconPath);
 }

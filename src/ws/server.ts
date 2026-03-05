@@ -15,6 +15,7 @@ type WsServerOptions = {
   getReaders: () => string[];
   onLinkRequested: (clientId: string) => void;
   onLinkStopped: (clientId: string) => void;
+  onError?: (error: Error) => void;
 };
 
 export class BridgeWsServer {
@@ -25,6 +26,9 @@ export class BridgeWsServer {
   constructor(options: WsServerOptions) {
     this.options = options;
     this.wss = new WebSocketServer({ host: options.host, port: options.port });
+    this.wss.on("error", (error) => {
+      this.options.onError?.(error);
+    });
     this.attach();
   }
 
