@@ -24,9 +24,9 @@ npm run build
 npm start
 ```
 
-## Windows service install
-See `docs/windows-service.md` for a step-by-step guide to run the bridge as a
-Windows Service (recommended for production devices).
+## Service install
+- Windows: `docs/windows-service.md`
+- macOS: `docs/macos-service.md`
 
 ## WebSocket events
 Client -> Bridge:
