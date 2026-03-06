@@ -11,8 +11,13 @@ background and starts on boot.
 - Visual Studio Build Tools 2022  
   https://visualstudio.microsoft.com/visual-cpp-build-tools/  
   During install, select **Desktop development with C++** and a **Windows 10/11 SDK**.
-- NSSM (Non-Sucking Service Manager)  
-  https://nssm.cc/download
+- WinSW (Windows Service Wrapper)  
+  https://github.com/winsw/winsw/releases
+
+## WinSW download checklist
+1. Download `WinSW-x64.exe` from the releases page.
+2. Rename it to: `RhinopassNfcBridgeService.exe`.
+3. Place it here: `tools\RhinopassNfcBridgeService.exe`.
 
 ## Build the service
 From the repo root:
@@ -28,9 +33,12 @@ Important:
 - `NFC_BRIDGE_TOKEN` should match your dashboard's
   `NEXT_PUBLIC_NFC_BRIDGE_TOKEN` so only authorized devices can link badges.
 
-## Install with NSSM (recommended)
-1. Add `nssm.exe` to your `PATH`.
-2. Run the installer script as Administrator:
+## Install with WinSW (recommended)
+1. Download WinSW from the releases page and rename it to
+   `RhinopassNfcBridgeService.exe`.
+2. Place it here:
+   `tools\RhinopassNfcBridgeService.exe`
+3. Run the installer script as Administrator:
 ```powershell
 scripts\install-windows-service.ps1
 ```

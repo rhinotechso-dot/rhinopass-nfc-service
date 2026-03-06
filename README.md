@@ -25,7 +25,7 @@ npm start
 ```
 
 ## Service install
-- Windows: `docs/windows-service.md`
+- Windows (WinSW): `docs/windows-service.md`
 - macOS: `docs/macos-service.md`
 
 ## WebSocket events

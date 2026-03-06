@@ -1,16 +1,17 @@
 $ErrorActionPreference = "Stop"
 
 $serviceName = "RhinopassNfcBridge"
-$nssm = (Get-Command nssm -ErrorAction SilentlyContinue).Source
-
-if (-not $nssm) {
-  throw "NSSM was not found in PATH."
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = Resolve-Path (Join-Path $scriptDir "..")
+$winswExe = Join-Path $root "tools\\RhinopassNfcBridgeService.exe"
+if (-not (Test-Path $winswExe)) {
+  throw "WinSW executable not found. Place it at: $winswExe"
 }
 
 Write-Host "Stopping service '$serviceName'..."
-& $nssm stop $serviceName | Out-Null
+& $winswExe stop | Out-Null
 
 Write-Host "Removing service '$serviceName'..."
-& $nssm remove $serviceName confirm
+& $winswExe uninstall
 
 Write-Host "Done."
