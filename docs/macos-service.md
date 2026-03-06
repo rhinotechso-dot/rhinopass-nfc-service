@@ -17,6 +17,8 @@ From the repo root:
 npm install
 npm run build
 ```
+You can clone to any folder you want. Once installed as a service, do not move
+the folder unless you uninstall and reinstall the service.
 
 ## Configure environment (required)
 From the repo root:
@@ -39,6 +41,10 @@ Run:
 chmod +x scripts/install-macos-service.sh scripts/uninstall-macos-service.sh scripts/run-bridge.sh
 ./scripts/install-macos-service.sh
 ```
+If macOS blocks the scripts (Gatekeeper), run:
+```bash
+xattr -dr com.apple.quarantine .
+```
 
 ## Uninstall
 ```bash
@@ -48,3 +54,15 @@ chmod +x scripts/install-macos-service.sh scripts/uninstall-macos-service.sh scr
 ## Notes
 - Logs are written to `logs/bridge.out.log` and `logs/bridge.err.log`.
 - If you move the folder, re-install the service so the path stays correct.
+
+## Check service status
+```bash
+launchctl list | grep com.rhinopass.nfcbridge
+```
+
+## Start / stop service
+```bash
+launchctl kickstart -k gui/$(id -u)/com.rhinopass.nfcbridge
+launchctl bootout gui/$(id -u)/com.rhinopass.nfcbridge
+```
+These commands can be run from any folder.

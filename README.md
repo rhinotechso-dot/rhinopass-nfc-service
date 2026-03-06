@@ -12,6 +12,16 @@ Copy `.env.example` to `.env` and adjust if needed.
 Set `NFC_BRIDGE_TOKEN` to a device token used by the dashboard when linking
 badges.
 
+## Quick Start (service)
+1) Clone the repo:
+```bash
+git clone https://github.com/rhinotechso-dot/rhinopass-nfc-service.git
+cd rhinopass-nfc-service
+```
+2) Follow the OS-specific guide:
+- Windows: https://github.com/rhinotechso-dot/rhinopass-nfc-service/blob/main/docs/windows-service.md
+- macOS: https://github.com/rhinotechso-dot/rhinopass-nfc-service/blob/main/docs/macos-service.md
+
 ## Run (dev)
 ```bash
 npm install
