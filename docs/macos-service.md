@@ -18,8 +18,16 @@ npm install
 npm run build
 ```
 
-## Configure environment
-Copy `.env.example` to `.env` and update values as needed.
+## Configure environment (required)
+From the repo root:
+```bash
+cp .env.example .env
+open -a TextEdit .env
+```
+Set the value:
+```
+NFC_BRIDGE_TOKEN=your_device_token_here
+```
 
 Important:
 - `NFC_BRIDGE_TOKEN` should match your dashboard's

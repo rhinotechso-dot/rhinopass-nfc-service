@@ -26,18 +26,29 @@ npm install
 npm run build
 ```
 
-## Configure environment
-Copy `.env.example` to `.env` and update values as needed.
-
+## Configure environment (required)
+From the repo root:
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+Set the value:
+```
+NFC_BRIDGE_TOKEN=your_device_token_here
+```
 Important:
 - `NFC_BRIDGE_TOKEN` should match your dashboard's
   `NEXT_PUBLIC_NFC_BRIDGE_TOKEN` so only authorized devices can link badges.
 
 ## Install with WinSW (recommended)
-1. Download WinSW from the releases page and rename it to
-   `RhinopassNfcBridgeService.exe`.
-2. Place it here:
-   `tools\RhinopassNfcBridgeService.exe`
+1. Create the tools folder (if it doesn't exist):
+```powershell
+New-Item -ItemType Directory -Force tools
+```
+2. Download WinSW and place it here:
+```
+tools\RhinopassNfcBridgeService.exe
+```
 3. Run the installer script as Administrator:
 ```powershell
 scripts\install-windows-service.ps1
