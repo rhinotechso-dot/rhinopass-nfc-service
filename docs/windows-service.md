@@ -26,6 +26,8 @@ cd rhinopass-nfc-service
 ```
 You can clone to any folder you want. Once installed as a service, do not move
 the folder unless you uninstall and reinstall the service.
+Tip: Avoid paths with spaces (for example `C:\Users\John Doe\...`) or ensure the
+service config quotes the Node entry path (the install script now does this).
 
 ## 3) Download WinSW
 1. Open the WinSW releases page:
@@ -76,6 +78,8 @@ powershell -ExecutionPolicy Bypass -File scripts\uninstall-windows-service.ps1
 - The service runs `node dist/index.js`.
 - Logs are stored in `logs/`.
 - If you move the folder, re-install the service so the path stays correct.
+- If the service shows "Stopped" right after install on a machine with spaces
+  in the path, reinstall so the generated WinSW config uses quoted arguments.
 
 ## Check service status (any PowerShell)
 ```powershell

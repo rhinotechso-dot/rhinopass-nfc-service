@@ -25,13 +25,18 @@ if (-not (Test-Path $logDir)) {
 }
 
 $winswConfig = [System.IO.Path]::ChangeExtension($winswExe, ".xml")
+$hasSpaces = ($root.Path -match "\s")
+if ($hasSpaces) {
+  Write-Warning "The install path contains spaces: $($root.Path)"
+  Write-Warning "This can break the Windows service if paths are not quoted."
+}
 $xml = @"
 <service>
   <id>$serviceName</id>
   <name>Rhinopass NFC Bridge</name>
   <description>Rhinopass NFC bridge service</description>
   <executable>$node</executable>
-  <arguments>$distEntry</arguments>
+  <arguments>"$distEntry"</arguments>
   <workingdirectory>$root</workingdirectory>
   <startmode>Automatic</startmode>
   <logpath>$logDir</logpath>

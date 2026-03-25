@@ -37,6 +37,8 @@ npm start
 ## Service install
 - Windows (WinSW): `docs/windows-service.md`
 - macOS: `docs/macos-service.md`
+Note: If your install path contains spaces, make sure the Windows service
+config quotes the Node entry path (handled by the install script).
 
 ## WebSocket events
 Client -> Bridge:
