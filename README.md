@@ -4,8 +4,17 @@ Local NFC bridge service for RhinoPass.
 
 ## What it does
 - Listens to NFC reader events (PC/SC)
-- Writes a token to the tag (NDEF text record)
+- Writes a token to the tag
+  - NDEF text record for Ultralight and NTAG style tags
+  - authenticated raw token blocks for MIFARE Classic tags
 - Sends the UID + token over WebSocket to the dashboard
+
+## Card support
+- MIFARE Ultralight and NTAG style tags are written with the existing NDEF flow
+- MIFARE Classic tags are written through authenticated block writes
+- Clients that read badges should accept both:
+  - NDEF text payloads
+  - raw token payloads from the Classic compatibility path
 
 ## Environment
 Copy `.env.example` to `.env` and adjust if needed.
